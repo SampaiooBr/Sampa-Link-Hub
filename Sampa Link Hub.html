@@ -70,13 +70,17 @@
     <header class="bg-playstation-card/80 backdrop-blur-md border-b border-playstation-border sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center neon-glow">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center neon-glow shrink-0">
                     <i class="fa-solid fa-gamepad text-2xl text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
-                        Sampa Link Hub
-                    </h1>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                            Sampa Link Hub
+                        </h1>
+                        <!-- Tag de Versão ao Lado do Título -->
+                        <span id="headerVersionTag" class="bg-blue-500/20 text-blue-400 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">v1.0.1</span>
+                    </div>
                     <p class="text-xs text-slate-400">Gerenciador de Favoritos Gamer</p>
                 </div>
             </div>
@@ -94,6 +98,11 @@
                 <button type="button" onclick="openManageCategoriesModal()" class="flex items-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl font-medium text-sm transition-all shadow-lg shadow-purple-900/30 active:scale-95 cursor-pointer">
                     <i class="fa-solid fa-folder-gear"></i>
                     <span>Categorias</span>
+                </button>
+                <!-- Botão Apoio -->
+                <button type="button" onclick="openSupportModal()" class="flex items-center space-x-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white px-4 py-2 rounded-xl font-medium text-sm transition-all shadow-lg shadow-rose-900/30 active:scale-95 cursor-pointer">
+                    <i class="fa-solid fa-heart text-pink-200"></i>
+                    <span>Apoio</span>
                 </button>
                 <div class="h-6 w-px bg-slate-800 mx-1"></div>
                 <button type="button" onclick="exportData()" title="Exportar Backup JSON" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all hover:text-blue-400 cursor-pointer">
@@ -126,6 +135,10 @@
             <button type="button" onclick="openManageCategoriesModal(); toggleMobileMenu();" class="w-full flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-xl font-medium text-sm">
                 <i class="fa-solid fa-folder-gear"></i>
                 <span>Gerenciar Categorias</span>
+            </button>
+            <button type="button" onclick="openSupportModal(); toggleMobileMenu();" class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white py-2.5 rounded-xl font-medium text-sm">
+                <i class="fa-solid fa-heart"></i>
+                <span>Apoiar Projeto (Pix)</span>
             </button>
             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
                 <button type="button" onclick="exportData()" class="flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-sm">
@@ -226,6 +239,49 @@
         </section>
 
     </main>
+
+    <!-- Modal: Apoiar Projeto (Pix & QR Code) -->
+    <div id="supportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4">
+        <div class="bg-playstation-card border border-playstation-border w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all text-center">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-100 flex items-center space-x-2">
+                    <i class="fa-solid fa-heart text-pink-500"></i>
+                    <span>Apoiar o Sampa Link Hub</span>
+                </h3>
+                <button type="button" onclick="closeSupportModal()" class="text-slate-400 hover:text-slate-200 cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-5">
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Se este hub te ajuda a organizar suas ferramentas e favoritos gamer, considere fazer uma contribuição para apoiar o projeto!
+                </p>
+
+                <!-- Container do QR Code embutido / link de cobrança -->
+                <div class="bg-white p-3 rounded-2xl inline-block shadow-lg mx-auto border border-slate-700">
+                    <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://nubank.com.br/cobrar/6okw4/6aeea0d4-62e0-478e-bd92-76875b573bd6" alt="QR Code Pix Apoio" class="w-44 h-44 rounded-lg">
+                </div>
+
+                <div class="space-y-2 text-left">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Chave Pix (Copia e Cola)</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="pixKeyInput" readonly value="abd297fe-7c1a-42a0-9352-64d75a540910" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-mono text-emerald-400 font-semibold focus:outline-none select-all">
+                        <button type="button" onclick="copyPixKey()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shrink-0 cursor-pointer shadow-md">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Copiar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <a href="https://nubank.com.br/cobrar/6okw4/6aeea0d4-62e0-478e-bd92-76875b573bd6" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 text-xs text-pink-400 hover:text-pink-300 font-semibold transition-colors">
+                        <span>Ou abra diretamente no aplicativo do Nubank</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: Adicionar/Editar Link -->
     <div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4">
@@ -781,20 +837,21 @@
         let links = JSON.parse(localStorage.getItem('ps_links')) || defaultLinks;
         let currentFilterCategory = 'all';
 
+        // System Version & Remote Update Checker
+        const CURRENT_VERSION = "1.0.1";
+        const VERSION_CHECK_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/version.json";
+
         window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('headerVersionTag').innerText = `v${CURRENT_VERSION}`;
             renderCategoryFilters();
             renderLinks();
             updateStats();
             checkForUpdates();
         });
 
-        // System Version & Remote Update Checker
-        const CURRENT_VERSION = "1.0.3";
-        const VERSION_CHECK_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/version.json";
-
         async function checkForUpdates() {
             try {
-                // Previne o cache do navegador adicionando timestamp no fetch
+                // Previne o cache adicionando timestamp
                 const response = await fetch(`${VERSION_CHECK_URL}?t=${Date.now()}`);
                 if (!response.ok) return;
 
@@ -826,8 +883,27 @@
                 });
             }
 
-            // Redireciona para o link oficial do GitHub Pages
-            window.location.href = "https://sampaioobr.github.io/Sampa-Link-Hub/";
+            // Força o recarregamento evitando cache
+            window.location.href = window.location.pathname + '?v=' + Date.now();
+        }
+
+        function openSupportModal() {
+            document.getElementById('supportModal').classList.remove('hidden');
+        }
+
+        function closeSupportModal() {
+            document.getElementById('supportModal').classList.add('hidden');
+        }
+
+        function copyPixKey() {
+            const input = document.getElementById('pixKeyInput');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('Chave Pix copiada com sucesso!', 'success');
+            }).catch(() => {
+                showToast('Erro ao copiar a chave Pix.', 'error');
+            });
         }
 
         function saveData() {
