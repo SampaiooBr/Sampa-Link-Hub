@@ -838,7 +838,7 @@
         let currentFilterCategory = 'all';
 
         // System Version & Remote Update Checker
-        const CURRENT_VERSION = "1.0.7";
+        const CURRENT_VERSION = "1.0.5";
         const VERSION_CHECK_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/version.json";
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -875,16 +875,33 @@
             }
         }
 
-        function applyUpdate() {
-            // Limpa os caches armazenados se houver
-            if ('caches' in window) {
-                caches.keys().then((names) => {
-                    for (let name of names) caches.delete(name);
-                });
-            }
+        const UPDATE_FILE_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/Sampa%20Link%20Hub.html";
+        const UPDATE_REPO_URL = "https://github.com/SampaiooBr/Sampa-Link-Hub";
 
-            // Força o recarregamento evitando cache
-            window.location.href = window.location.pathname + '?v=' + Date.now();
+        // O Hub é um arquivo local: recarregar a página só reabre a mesma versão antiga.
+        // Por isso baixamos o arquivo novo do GitHub para o usuário substituir o antigo.
+        async function applyUpdate() {
+            try {
+                showToast('Baixando a nova versão...', 'info');
+                const response = await fetch(`${UPDATE_FILE_URL}?t=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'Sampa Link Hub.html';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
+                showToast('Nova versão baixada! Substitua o arquivo antigo por ela e abra novamente.', 'success');
+            } catch (error) {
+                // Se o download automático falhar, abre a página do projeto
+                showToast('Não foi possível baixar automaticamente. Abrindo o GitHub...', 'error');
+                window.open(UPDATE_REPO_URL, '_blank', 'noopener');
+            }
         }
 
         function openSupportModal() {
