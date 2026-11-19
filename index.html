@@ -838,7 +838,7 @@
         let currentFilterCategory = 'all';
 
         // System Version & Remote Update Checker
-        const CURRENT_VERSION = "1.0.8";
+        const CURRENT_VERSION = "1.0.7";
         const VERSION_CHECK_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/version.json";
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -875,32 +875,33 @@
             }
         }
 
-        const PAGES_URL = "https://sampaioobr.github.io/Sampa-Link-Hub/";
+        const UPDATE_FILE_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/Sampa%20Link%20Hub.html";
+        const UPDATE_REPO_URL = "https://github.com/SampaiooBr/Sampa-Link-Hub";
 
-        // Hospedado no GitHub Pages: recarregar já traz a versão nova, sem baixar nada.
-        // Aberto como arquivo local (file://): leva o usuário para a versão online,
-        // exportando antes um backup para ele importar lá (os dados ficam por endereço).
+        // O Hub é um arquivo local: recarregar a página só reabre a mesma versão antiga.
+        // Por isso baixamos o arquivo novo do GitHub para o usuário substituir o antigo.
         async function applyUpdate() {
-            const isHosted = location.protocol === 'http:' || location.protocol === 'https:';
+            try {
+                showToast('Baixando a nova versão...', 'info');
+                const response = await fetch(`${UPDATE_FILE_URL}?t=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
 
-            if (isHosted) {
-                try {
-                    if ('serviceWorker' in navigator) {
-                        const regs = await navigator.serviceWorker.getRegistrations();
-                        await Promise.all(regs.map(r => r.unregister()));
-                    }
-                    if ('caches' in window) {
-                        const names = await caches.keys();
-                        await Promise.all(names.map(n => caches.delete(n)));
-                    }
-                } catch (e) { /* segue mesmo assim */ }
-                window.location.replace(location.origin + location.pathname + '?v=' + Date.now());
-                return;
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'Sampa Link Hub.html';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
+                showToast('Nova versão baixada! Substitua o arquivo antigo por ela e abra novamente.', 'success');
+            } catch (error) {
+                // Se o download automático falhar, abre a página do projeto
+                showToast('Não foi possível baixar automaticamente. Abrindo o GitHub...', 'error');
+                window.open(UPDATE_REPO_URL, '_blank', 'noopener');
             }
-
-            exportData();
-            showToast('Backup salvo! Abrindo a versão online. Lá, clique em Importar (seta para cima) e escolha o backup.', 'success');
-            setTimeout(() => window.open(PAGES_URL, '_blank', 'noopener'), 1500);
         }
 
         function openSupportModal() {
