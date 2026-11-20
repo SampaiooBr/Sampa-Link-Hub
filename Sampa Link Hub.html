@@ -876,10 +876,9 @@
         }
 
         const UPDATE_FILE_URL = "https://raw.githubusercontent.com/SampaiooBr/Sampa-Link-Hub/main/Sampa%20Link%20Hub.html";
-        const UPDATE_REPO_URL = "https://github.com/SampaiooBr/Sampa-Link-Hub";
+        const UPDATE_PAGE_URL = "https://github.com/SampaiooBr/Sampa-Link-Hub/blob/main/Sampa%20Link%20Hub.html";
 
-        // O Hub é um arquivo local: recarregar a página só reabre a mesma versão antiga.
-        // Por isso baixamos o arquivo novo do GitHub para o usuário substituir o antigo.
+        // Baixa a versão mais recente do arquivo direto do GitHub
         async function applyUpdate() {
             try {
                 showToast('Baixando a nova versão...', 'info');
@@ -896,11 +895,10 @@
                 a.remove();
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
 
-                showToast('Nova versão baixada! Substitua o arquivo antigo por ela e abra novamente.', 'success');
+                showToast('Nova versão baixada! Substitua o arquivo antigo por ela.', 'success');
             } catch (error) {
-                // Se o download automático falhar, abre a página do projeto
                 showToast('Não foi possível baixar automaticamente. Abrindo o GitHub...', 'error');
-                window.open(UPDATE_REPO_URL, '_blank', 'noopener');
+                window.open(UPDATE_PAGE_URL, '_blank', 'noopener');
             }
         }
 
